@@ -1,6 +1,7 @@
 {% extends "main.html" %}
 {% block content %}
-{% for category in categories %}    
+{% for category in categories %}
+    <a href = "{{url_for('showParts', category_id = category.id)}}">
         <div class="row">
             <div class="col-md-1"></div>
                 <div class="col-md-10 category-list">

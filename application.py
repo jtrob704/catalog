@@ -26,7 +26,28 @@ session = DBSession()
 @app.route('/catalog')
 def showCategories():
     categories = session.query(Category).order_by(asc(Category.name))
-    return render_template('publicmain.html', categories=categories)
+    return render_template('publiccategories.html', categories=categories)
+
+
+@app.route('/catalog/<int:category_id>/')
+def showParts(category_id):
+    category = session.query(Category).filter_by(id=category_id).one()
+    """creator = getUserInfo(category.user_id)"""
+    parts = session.query(Part).filter_by(category_id=category_id).all()
+    return render_template('publicparts.html', parts=parts, category=category)
+    
+
+def getUserInfo(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
+
+
+def getUserID(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
 
 
 if __name__ == '__main__':

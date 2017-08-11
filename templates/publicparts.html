@@ -1,0 +1,16 @@
+{% extends "main.html" %}
+{% block content %}
+{% if parts !=[] %}
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-3">
+            <h2>Category: {{category.name}}</h2>
+                {% for p in parts %}
+                        <div class="parts">
+                            <h3>{{p.name}}</h3>
+                            <p>{{p.description}}</p>
+                        </div>
+                {% endfor %}
+                {% endif %}
+        </div>
+{% endblock %}
