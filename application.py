@@ -65,6 +65,27 @@ def newParts(category_id):
         return render_template('newpart.html', category_id=category_id)
 
 
+@app.route('/catalog/<int:category_id>/<int:part_id>/edit', methods=['GET', 'POST'])
+def editMenuItem(category_id, part_id):
+    if 'username' not in login_session:
+        return redirect('/login')
+    editedPart = session.query(Part).filter_by(id=part_id).one()
+    category = session.query(Category).filter_by(id=category_id).one()
+    if login_session['user_id'] != category.user_id:
+        return "<script>function myFunction() {alert('You are not authorized to edit parts in this category. Please create your own category in order to edit parts.');}</script><body onload='myFunction()''>"
+    if request.method == 'POST':
+        if request.form['name']:
+            editedPart.name = request.form['name']
+        if request.form['description']:
+            editedPart.description = request.form['description']
+        session.add(editedPart)
+        session.commit()
+        flash('Part Successfully Edited')
+        return redirect(url_for('showParts', category_id=category_id))
+    else:
+        return render_template('editparts.html', category_id=category_id, part_id=part_id, part=editedPart)
+
+
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
