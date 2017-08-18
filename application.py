@@ -66,7 +66,7 @@ def newParts(category_id):
 
 
 @app.route('/catalog/<int:category_id>/<int:part_id>/edit', methods=['GET', 'POST'])
-def editMenuItem(category_id, part_id):
+def editPart(category_id, part_id):
     if 'username' not in login_session:
         return redirect('/login')
     editedPart = session.query(Part).filter_by(id=part_id).one()
@@ -232,6 +232,6 @@ def gdisconnect():
 
 if __name__ == '__main__':
     app.secret_key = 'super secret key'
-    app.config['sqlalchemy'] = 'filesystem'
+    app.config['sqlalchemy'] = 'sqlite:///computerhw.db'
     app.debug = True
     app.run(host='0.0.0.0', port=8000)
