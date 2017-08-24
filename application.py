@@ -39,30 +39,86 @@ def showLogin():
 @app.route('/catalog')
 def showCategories():
     categories = session.query(Category).order_by(asc(Category.name))
-    return render_template('publiccategories.html', categories=categories)
+    if 'username' not in login_session:
+        return render_template('publiccategories.html', categories=categories)
+    else:
+        return render_template('categories.html', categories=categories)
+
+
+@app.route('/catalog/new/', methods=['GET', 'POST'])
+def newCategory():
+    if 'username' not in login_session:
+        return redirect('/login')
+    if request.method == 'POST':
+        newCategory = Category(
+            name=request.form['name'], user_id=login_session['user_id'])
+        session.add(newCategory)
+        flash('New Category %s Successfully Created' % newCategory.name)
+        session.commit()
+        return redirect(url_for('showCategories'))
+    else:
+        return render_template('newcategory.html')
+
+
+@app.route('/catalog/<int:category_id>/edit/', methods=['GET', 'POST'])
+def editCategory(category_id):
+    editedCategory = session.query(
+        Category).filter_by(id=category_id).one()
+    if 'username' not in login_session:
+        return redirect('/login')
+    if editedCategory.user_id != login_session['user_id']:
+        return "<script>function myFunction() {alert('You are not authorized to edit this category. Please create your own category in order to edit.');}</script><body onload='myFunction()''>"
+    if request.method == 'POST':
+        if request.form['name']:
+            editedCategory.name = request.form['name']
+            flash('Category Successfully Edited %s' % editedCategory.name)
+            return redirect(url_for('showCategorys'))
+    else:
+        return render_template('editcategory.html', category=editedCategory)
+
+
+@app.route('/catalog/<int:category_id>/delete/', methods=['GET', 'POST'])
+def deleteCategory(category_id):
+    categoryToDelete = session.query(
+        Category).filter_by(id=category_id).one()
+    if 'username' not in login_session:
+        return redirect('/login')
+    if categoryToDelete.user_id != login_session['user_id']:
+        return "<script>function myFunction() {alert('You are not authorized to delete this category. Please create your own category in order to delete.');}</script><body onload='myFunction()''>"
+    if request.method == 'POST':
+        session.delete(categoryToDelete)
+        flash('%s Successfully Deleted' % categoryToDelete.name)
+        session.commit()
+        return redirect(url_for('showCategories', category_id=category_id))
+    else:
+        return render_template('deletecategory.html', category=categoryToDelete)
 
 
 @app.route('/<int:category_id>/')
 @app.route('/catalog/<int:category_id>/')
 def showParts(category_id):
     category = session.query(Category).filter_by(id=category_id).one()
-    """creator = getUserInfo(category.user_id)"""
+    creator = getUserInfo(category.user_id)
     parts = session.query(Part).filter_by(category_id=category_id).all()
-    return render_template('publicparts.html', parts=parts, category=category)
+    if 'username' not in login_session or creator.id != login_session['user_id']:
+        return render_template('publicparts.html', parts=parts, category=category, creator=creator)
+    else:
+        return render_template('parts.html', parts=parts, category=category, creator=creator)
 
 
 @app.route('/catalog/<int:category_id>/new', methods=['GET', 'POST'])
-def newParts(category_id):
+def newPart(category_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     category = session.query(Category).filter_by(id=category_id).one()
-    user_id = category.user_id
     if request.method == 'POST':
-        newPart = Part(name=request.form['name'], description=request.form['description'], category_id=category.id, user_id=user_id)
+        newPart = Part(name=request.form['name'], description=request.form['description'], category_id=category_id, user_id=category.user_id)
         session.add(newPart)
         session.commit()
         flash('New Part %s Successfully Created' % (newPart.name))
-        return redirect(url_for('showParts', category_id=category_id))
+        return redirect(url_for('showCategories'))
     else:
-        return render_template('newpart.html', category_id=category_id)
+        return render_template('newpart.html')
 
 
 @app.route('/catalog/<int:category_id>/<int:part_id>/edit', methods=['GET', 'POST'])
@@ -84,6 +140,23 @@ def editPart(category_id, part_id):
         return redirect(url_for('showParts', category_id=category_id))
     else:
         return render_template('editparts.html', category_id=category_id, part_id=part_id, part=editedPart)
+
+
+@app.route('/catalog/<int:category_id>/part/<int:part_id>/delete', methods=['GET', 'POST'])
+def deletePart(category_id, part_id):
+    if 'username' not in login_session:
+        return redirect('/login')
+    category = session.query(Category).filter_by(id=category_id).one()
+    partToDelete = session.query(Part).filter_by(id=part_id).one()
+    if login_session['user_id'] != category.user_id:
+        return "<script>function myFunction() {alert('You are not authorized to delete parts to this category. Please create your own category in order to delete parts.');}</script><body onload='myFunction()''>"
+    if request.method == 'POST':
+        session.delete(partToDelete)
+        session.commit()
+        flash('Part Item Successfully Deleted')
+        return redirect(url_for('showParts', category_id=category_id))
+    else:
+        return render_template('deletepart.html', part=partToDelete)
 
 
 @app.route('/gconnect', methods=['POST'])

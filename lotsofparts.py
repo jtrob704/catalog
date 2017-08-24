@@ -45,32 +45,38 @@ category4 = Category(user_id=1, name="Video Cards")
 session.add(category4)
 session.commit()
 
-part1 = Part(user_id=1, name="AMD FX Processor", description="Processors built on AMD Bulldozer and Piledriver microarchitectures", category=category1)
+part1 = Part(user_id=1, name="AMD FX Processor",
+             description="Processors built on AMD Bulldozer and Piledriver microarchitectures", category=category1)
 
 session.add(part1)
 session.commit()
 
-part2 = Part(user_id=1, name="Intel Core Processor", description="Processors built on Intel Skylake and Kaby Lake microarchitectures", category=category1)
+part2 = Part(user_id=1, name="Intel Core Processor",
+             description="Processors built on Intel Skylake and Kaby Lake microarchitectures", category=category1)
 
 session.add(part2)
 session.commit()
 
-part3 = Part(user_id=1, name="ARM processor", description="Processors built on ARM microarchitectures")
+part3 = Part(user_id=1, name="ARM processor",
+             description="Processors built on ARM microarchitectures")
 
 session.add(part3)
 session.commit()
 
-part4 = Part(user_id=1, name="4GB RAM", description="4 gigabytes of DDR3 memory", category=category2)
+part4 = Part(user_id=1, name="4GB RAM",
+             description="4 gigabytes of DDR3 memory", category=category2)
 
 session.add(part4)
 session.commit()
 
-part5 = Part(user_id=1, name="8GB RAM", description="8 gigabytes of DDR3 memory", category=category2)
+part5 = Part(user_id=1, name="8GB RAM",
+             description="8 gigabytes of DDR3 memory", category=category2)
 
 session.add(part5)
 session.commit()
 
-part6 = Part(user_id=1, name="16GB RAM", description="16 gigabytes of DDR3 memory", category=category2)
+part6 = Part(user_id=1, name="16GB RAM",
+             description="16 gigabytes of DDR3 memory", category=category2)
 
 session.add(part6)
 session.commit()
