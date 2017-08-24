@@ -26,6 +26,18 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
+@app.route('/catalog/<int:category_id>/json')
+def categoryJSON(category_id):    
+    parts = session.query(Part).filter_by(category_id=category_id).all()
+    return jsonify(Parts=[p.serialize for p in parts])
+
+
+@app.route('/catalog/<int:category_id>/<int:part_id>/json')
+def partJSON(category_id, part_id):
+    part = session.query(Part).filter_by(id=part_id).one()
+    return jsonify(part=part.serialize)
+
+
 @app.route('/login')
 def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
@@ -72,7 +84,7 @@ def editCategory(category_id):
         if request.form['name']:
             editedCategory.name = request.form['name']
             flash('Category Successfully Edited %s' % editedCategory.name)
-            return redirect(url_for('showCategorys'))
+            return redirect(url_for('showCategories'))
     else:
         return render_template('editcategory.html', category=editedCategory)
 
@@ -89,7 +101,7 @@ def deleteCategory(category_id):
         session.delete(categoryToDelete)
         flash('%s Successfully Deleted' % categoryToDelete.name)
         session.commit()
-        return redirect(url_for('showCategories', category_id=category_id))
+        return redirect(url_for('showCategories'))
     else:
         return render_template('deletecategory.html', category=categoryToDelete)
 
@@ -116,7 +128,7 @@ def newPart(category_id):
         session.add(newPart)
         session.commit()
         flash('New Part %s Successfully Created' % (newPart.name))
-        return redirect(url_for('showCategories'))
+        return redirect(url_for('showParts', category_id=category_id))
     else:
         return render_template('newpart.html')
 
