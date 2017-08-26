@@ -1,15 +1,19 @@
 {% extends "main.html" %}
 {% block content %}
+{% include "header.html" %}
 <div class="row">
-    <div class="col-md-6 col-md-offset-1 padding-top">
+    <div class="col-md-12 padding-top catalog-new text-center">
         <form action="#" method="post">
             <div class="form-group">
                 <label for="name">Name:</label>
                 <input type="text" maxlength="50" class="form-control" name="name" placeholder="Name of the part">
                 <label for="description">Description:</label>
                 <textarea class="form-control" maxlength="250" rows="3" name="description" placeholder="Description of the part"></textarea>
-                <button type="submit" class="btn btn-primary" id="submit" type="submit">Create</button>
+                <button type="submit" class="btn btn-primary" id="submit" type="submit" value="new-val">Create</button>
+                <button class="btn btn-secondary" id="submit" type="submit" value="cancel-val">
+                <span class="fa fa-remove" aria-hidden="true"></span> Cancel</button>
             </div>
     </div>
+</div>
 </div>
 {% endblock %}

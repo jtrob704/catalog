@@ -1,6 +1,9 @@
 {% extends "main.html" %}
 {% block content %}
 {% include "header.html" %}
+<div class="catalog-main">
+
+
 	<div class="row divider green">
 		<div class="col-md-12"></div>
 	</div>
@@ -17,21 +20,22 @@
 	</div>
 
 <div class = 'flash'>
-		      {% with messages = get_flashed_messages() %}
-      {% if messages %}
-
-        <ul>
-        {% for message in messages %}
-            <li> <strong> {{ message }} </strong> </li>
-        {% endfor %}
-        </ul>
-        {% endif %}
-    {% endwith %}
+	{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div class="alert alert-success" role="alert">
+<ul>
+{% for message in messages %}
+  <li> <strong> {{ message }} </strong> </li>
+{% endfor %}
+</ul>
+</div>
+{% endif %}
+{% endwith %}
 
 </div>
 	<div class="row padding-top padding-bottom">
-		<div class="col-md-1"></div>
-		<div class="col-md-11 padding-none">
+
+		<div class="col-md-12 padding-none">
 			<a href="{{url_for('editCategory', category_id = category.id )}}">
 				<button class="btn btn-primary" id="new-part">
 					<span class="fa fa-pencil-square-o" aria-hidden="true"></span>Edit Category
@@ -48,12 +52,12 @@
 				</button>
 			</a>
 		</div>
-		<div class="col-md-7"></div>
+
 	</div>
 {% if parts !=[] %}
     <div class="row">
-        <div class="col-md-1"></div>
-        <div class="col-md-3">
+
+        <div class="col-md-12 text-center">
             <h2>Category: {{category.name}}</h2>
                 {% for p in parts %}
                         <div class="parts">
@@ -65,4 +69,6 @@
                 {% endfor %}
                 {% endif %}
         </div>
+		</div>
+		</div>
 {% endblock %}

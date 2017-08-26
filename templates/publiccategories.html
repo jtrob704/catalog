@@ -1,34 +1,30 @@
 {% extends "main.html" %}
 {% block content %}
-	<div class="row top-menu">
-		<div class="col-md-10"></div>
-		<div class="col-md-2 text-right">
-			<a href="{{url_for('showLogin')}}">Click Here to Log in </a>
-		</div>
-	</div>
+{% include "header.html" %}
 	<div class="row divider blue">
 		<div class="col-md-12"></div>
 	</div>
 	<div class="row banner main">
 		<div class="col-md-1"></div>
-		<div class="col-md-11 padding-none">
+		<div class="col-md-10 padding-none text-center">
 			<h1>Categories</h1>
 		</div>
+		<div class="col-md-1"></div>
 	</div>
 
 	<div class = 'flash'>
-		      {% with messages = get_flashed_messages() %}
-      {% if messages %}
-
-        <ul>
-        {% for message in messages %}
-            <li> <strong> {{ message }} </strong> </li>
-        {% endfor %}
-        </ul>
-        {% endif %}
-    {% endwith %}
-
-</div>
+			      {% with messages = get_flashed_messages() %}
+	      {% if messages %}
+			<div class="alert alert-success" role="alert">
+	        <ul>
+	        {% for message in messages %}
+	            <li> <strong> {{ message }} </strong> </li>
+	        {% endfor %}
+	        </ul>
+		</div>
+	        {% endif %}
+	    {% endwith %}
+	</div>
 
 
 
@@ -43,7 +39,7 @@
     <a href = "{{url_for('showParts', category_id = category.id)}}">
         <div class="row">
             <div class="col-md-1"></div>
-                <div class="col-md-10 category-list">
+                <div class="col-md-10 category-list text-center">
                     <h3>{{category.name}}</h3>
                 </div>
             <div class="col-md-1"></div>

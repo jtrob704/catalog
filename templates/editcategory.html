@@ -1,29 +1,31 @@
 {% extends "main.html" %}
 {% block content %}
 {% include "header.html" %}
+<div class="catalog-edit">
 	<div class="row divider green">
 		<div class="col-md-12"></div>
 	</div>
 	<div class="row banner menu">
-		<div class="col-md-11 col-md-offset-1 padding-none">
+		<div class="col-md-12 text-center">
 			<h1>Edit {{category.name}}</h1>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-6 col-md-offset-1 padding-top">
+		<div class="col-md-12 text-center">
 			<form action="{{ url_for('editCategory',category_id = category.id)}}" method = "post">
 				<div class="form-group">
 					<label for="name">Name:</label>
 					<input type ="text" class="form-control" name="name" value="{{category.name }}">
 					<div class="padding-bottom"></div>
-					<button type="submit" class="btn btn-primary" id="submit" type="submit">
+					<button type="submit" class="btn btn-primary" id="submit" type="submit" value="edit-val">
 					<span class="fa fa-check" aria-hidden="true"></span>Save</button>
 					<a href = '{{url_for('showCategories')}}'>
-						<button class="btn btn-secondary">
+						<button class="btn btn-secondary" id="submit" type="submit" value="cancel-val">
 						<span class="fa fa-remove" aria-hidden="true"></span> Cancel</button>
 					</a>
 				</div>
 			</form>
 		</div>
+	</div>
 	</div>
 {% endblock %}

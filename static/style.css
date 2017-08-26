@@ -1,0 +1,41 @@
+.container {
+    margin: auto;
+}
+
+.top-menu, .top-menu a {
+    color: white;
+    text-decoration: none;
+    background-color: #4d94ff;
+}
+
+.flash, .flash ul {
+    text-align: center;
+    list-style-type: none;
+}
+
+.banner.main {
+    margin-top: 2em;
+}
+
+.catalog-main  {
+    text-align: center;
+}
+
+.catalog-edit {
+    text-align: center;
+}
+
+.catalog-new {
+    text-align: center;
+}
+
+.catalog-delete {
+    text-align: center;
+}
+
+.padding-top {
+    padding-top: 2em;
+}
+.padding-bottom {
+    padding-bottom: 2em;
+}

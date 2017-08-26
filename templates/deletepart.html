@@ -1,17 +1,22 @@
 {% extends "main.html" %}
 {% block content %}
 {% include "header.html" %}
+<div class="row">
+<div class="col-md-12 catalog-delete text-center">
+
 <h2> Are you sure you want to delete {{part.name}}? </h2>
 
 <form action="#" method = 'post'>
 
-	<button type="submit" class="btn btn-danger" id="submit" type="submit">
+	<button type="submit" class="btn btn-danger" id="submit" type="submit" value="delete-val">
 	<span class="fa fa-trash-o" aria-hidden="true"></span>Delete</button>
-	<a href = '{{url_for('showCategories')}}'>
-		<button class="btn btn-secondary">
+	<a href = "{{url_for('showCategories')}}">
+		<button class="btn btn-secondary" id="submit" type="submit" value="cancel-val">
 		<span class="fa fa-remove" aria-hidden="true"></span> Cancel</button>
+	<a href=""
 	</a>
 
 </form>
-
+</div>
+</div>
 {% endblock %}
