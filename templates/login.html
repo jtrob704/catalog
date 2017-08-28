@@ -1,8 +1,11 @@
 {% extends "main.html" %}
 {% block content %}
+{% include "header.html" %}
 <!-- GOOGLE PLUS SIGN IN-->
 
-
+<div class="row" id=login>
+    <div class="col-md-12 text-center">
+    <h2 id="login-prompt">Please use your Google Account to login</h2>
           <div id="signInButton">
           <span class="g-signin"
             data-scope="openid email"
@@ -14,9 +17,9 @@
             data-approvalprompt="force">
           </span>
         </div>
-
 <div id="result"></div>
-
+</div>
+</div>
 <script>
 function signInCallback(authResult) {
   if (authResult['code']) {

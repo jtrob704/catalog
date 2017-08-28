@@ -1,3 +1,4 @@
+"""Item Catalog Application."""
 from flask import (Flask, render_template, request, redirect, jsonify, url_for,
                    flash)
 from sqlalchemy import create_engine, asc
@@ -27,19 +28,22 @@ session = DBSession()
 
 
 @app.route('/catalog/<int:category_id>/json')
-def categoryJSON(category_id):    
+def categoryJSON(category_id):
+    """Get JSON for Categories."""
     parts = session.query(Part).filter_by(category_id=category_id).all()
     return jsonify(Parts=[p.serialize for p in parts])
 
 
 @app.route('/catalog/<int:category_id>/<int:part_id>/json')
 def partJSON(category_id, part_id):
+    """Get JSON for individual parts."""
     part = session.query(Part).filter_by(id=part_id).one()
     return jsonify(part=part.serialize)
 
 
 @app.route('/login')
 def showLogin():
+    """Show the login form."""
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
@@ -50,6 +54,7 @@ def showLogin():
 @app.route('/')
 @app.route('/catalog')
 def showCategories():
+    """Show a list of all categories."""
     categories = session.query(Category).order_by(asc(Category.name))
     if 'username' not in login_session:
         return render_template('publiccategories.html', categories=categories)
@@ -59,6 +64,7 @@ def showCategories():
 
 @app.route('/catalog/new/', methods=['GET', 'POST'])
 def newCategory():
+    """Create a new Category."""
     if 'username' not in login_session:
         return redirect('/login')
     if request.method == 'POST':
@@ -74,12 +80,15 @@ def newCategory():
 
 @app.route('/catalog/<int:category_id>/edit/', methods=['GET', 'POST'])
 def editCategory(category_id):
+    """Update a category."""
     editedCategory = session.query(
         Category).filter_by(id=category_id).one()
     if 'username' not in login_session:
         return redirect('/login')
     if editedCategory.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not authorized to edit this category. Please create your own category in order to edit.');}</script><body onload='myFunction()''>"
+        return """<script>function myFunction() {alert('You are not authorized
+                to edit this category. Please create your own category in order
+                to edit.');}</script><body onload='myFunction()''>"""
     if request.method == 'POST':
         if request.form['name']:
             editedCategory.name = request.form['name']
@@ -91,40 +100,51 @@ def editCategory(category_id):
 
 @app.route('/catalog/<int:category_id>/delete/', methods=['GET', 'POST'])
 def deleteCategory(category_id):
+    """Delete a category."""
     categoryToDelete = session.query(
         Category).filter_by(id=category_id).one()
     if 'username' not in login_session:
         return redirect('/login')
     if categoryToDelete.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not authorized to delete this category. Please create your own category in order to delete.');}</script><body onload='myFunction()''>"
+        return """<script>function myFunction() {alert('You are not authorized
+               to delete this category. Please create your own category in
+               order to delete.');}</script><body onload='myFunction()''>"""
     if request.method == 'POST':
         session.delete(categoryToDelete)
         flash('%s Successfully Deleted' % categoryToDelete.name)
         session.commit()
         return redirect(url_for('showCategories'))
     else:
-        return render_template('deletecategory.html', category=categoryToDelete)
+        return render_template('deletecategory.html',
+                               category=categoryToDelete)
 
 
 @app.route('/<int:category_id>/')
 @app.route('/catalog/<int:category_id>/')
 def showParts(category_id):
+    """Show a list of parts by Category ID."""
     category = session.query(Category).filter_by(id=category_id).one()
     creator = getUserInfo(category.user_id)
     parts = session.query(Part).filter_by(category_id=category_id).all()
-    if 'username' not in login_session or creator.id != login_session['user_id']:
-        return render_template('publicparts.html', parts=parts, category=category, creator=creator)
+    if ('username' not in login_session or
+            creator.id != login_session['user_id']):
+        return render_template('publicparts.html', parts=parts,
+                               category=category, creator=creator)
     else:
-        return render_template('parts.html', parts=parts, category=category, creator=creator)
+        return render_template('parts.html', parts=parts, category=category,
+                               creator=creator)
 
 
 @app.route('/catalog/<int:category_id>/new', methods=['GET', 'POST'])
 def newPart(category_id):
+    """Create a new part under a Category ID."""
     if 'username' not in login_session:
         return redirect('/login')
     category = session.query(Category).filter_by(id=category_id).one()
     if request.method == 'POST':
-        newPart = Part(name=request.form['name'], description=request.form['description'], category_id=category_id, user_id=category.user_id)
+        newPart = Part(name=request.form['name'],
+                       description=request.form['description'],
+                       category_id=category_id, user_id=category.user_id)
         session.add(newPart)
         session.commit()
         flash('New Part %s Successfully Created' % (newPart.name))
@@ -133,14 +153,19 @@ def newPart(category_id):
         return render_template('newpart.html')
 
 
-@app.route('/catalog/<int:category_id>/<int:part_id>/edit', methods=['GET', 'POST'])
+@app.route('/catalog/<int:category_id>/<int:part_id>/edit',
+           methods=['GET', 'POST'])
 def editPart(category_id, part_id):
+    """Edit a part using the category and part ID."""
     if 'username' not in login_session:
         return redirect('/login')
     editedPart = session.query(Part).filter_by(id=part_id).one()
     category = session.query(Category).filter_by(id=category_id).one()
     if login_session['user_id'] != category.user_id:
-        return "<script>function myFunction() {alert('You are not authorized to edit parts in this category. Please create your own category in order to edit parts.');}</script><body onload='myFunction()''>"
+        return """"<script>function myFunction() {alert('You are not authorized
+               to edit parts in this category. Please create your own category
+               in order to edit parts.');}
+               </script><body onload='myFunction()''>"""
     if request.method == 'POST':
         if request.form['name']:
             editedPart.name = request.form['name']
@@ -151,17 +176,23 @@ def editPart(category_id, part_id):
         flash('Part Successfully Edited')
         return redirect(url_for('showParts', category_id=category_id))
     else:
-        return render_template('editparts.html', category_id=category_id, part_id=part_id, part=editedPart)
+        return render_template('editparts.html', category_id=category_id,
+                               part_id=part_id, part=editedPart)
 
 
-@app.route('/catalog/<int:category_id>/part/<int:part_id>/delete', methods=['GET', 'POST'])
+@app.route('/catalog/<int:category_id>/part/<int:part_id>/delete',
+           methods=['GET', 'POST'])
 def deletePart(category_id, part_id):
+    """Delete a part using the category and part ID."""
     if 'username' not in login_session:
         return redirect('/login')
     category = session.query(Category).filter_by(id=category_id).one()
     partToDelete = session.query(Part).filter_by(id=part_id).one()
     if login_session['user_id'] != category.user_id:
-        return "<script>function myFunction() {alert('You are not authorized to delete parts to this category. Please create your own category in order to delete parts.');}</script><body onload='myFunction()''>"
+        return """<script>function myFunction() {alert('You are not authorized
+               to delete parts to this category. Please create your own
+               category in order to delete parts.');}
+               </script><body onload='myFunction()''>"""
     if request.method == 'POST':
         session.delete(partToDelete)
         session.commit()
@@ -173,6 +204,7 @@ def deletePart(category_id, part_id):
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
+    """Log into Google Accounts."""
     # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
@@ -223,8 +255,8 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
-                                 200)
+        response = make_response(json.dumps('Current user is \
+                                            already connected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -257,7 +289,8 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += ''' " style = "width: 300px; height: 300px;border-radius: 150px;
+                  -webkit-border-radius: 150px;-moz-border-radius: 150px;"> '''
     flash("you are now logged in as %s" % login_session['username'])
     return output
 
@@ -265,6 +298,7 @@ def gconnect():
 
 
 def createUser(login_session):
+    """Create user in database."""
     newUser = User(name=login_session['username'], email=login_session[
                    'email'], picture=login_session['picture'])
     session.add(newUser)
@@ -274,11 +308,13 @@ def createUser(login_session):
 
 
 def getUserInfo(user_id):
+    """Retrieve user information bu user ID."""
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
 
 def getUserID(email):
+    """Retrieve user ID by user email."""
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
@@ -290,13 +326,12 @@ def getUserID(email):
 
 @app.route('/gdisconnect')
 def gdisconnect():
+    """Logout of Google Accounts."""
     # Only disconnect a connected user.
     access_token = login_session.get('access_token')
     if access_token is None:
-        response = make_response(
-            json.dumps('Current user not connected.'), 401)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        flash('Current user not connected.')
+        return redirect(url_for('showCategories'))
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
@@ -306,13 +341,11 @@ def gdisconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
-        response = make_response(json.dumps('Successfully disconnected.'), 200)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        flash('User successfully logged out.')
+        return redirect(url_for('showCategories'))
     else:
-        response = make_response(json.dumps('Failed to revoke token for given user.', 400))
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        flash('Failed to revoke token for given user.')
+        return redirect(url_for('showCategories'))
 
 
 if __name__ == '__main__':

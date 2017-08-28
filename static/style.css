@@ -36,6 +36,15 @@
 .padding-top {
     padding-top: 2em;
 }
+
 .padding-bottom {
+    padding-bottom: 2em;
+}
+
+#login {
+    padding-top: 2em;
+}
+
+#login-prompt {
     padding-bottom: 2em;
 }

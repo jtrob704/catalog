@@ -1,3 +1,4 @@
+"""Generate example data."""
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -79,6 +80,30 @@ part6 = Part(user_id=1, name="16GB RAM",
              description="16 gigabytes of DDR3 memory", category=category2)
 
 session.add(part6)
+session.commit()
+
+part7 = Part(user_id=1, name="Intel Motherboard",
+             description="Intel Core iX Motherboard", category=category3)
+
+session.add(part7)
+session.commit()
+
+part8 = Part(user_id=1, name="AMD Motherboard",
+             description="AMD Ryzen Motherboard", category=category3)
+
+session.add(part8)
+session.commit()
+
+part9 = Part(user_id=1, name="Nvidia Geforece Video Card",
+             description="High performance Geforce GPU", category=category4)
+
+session.add(part9)
+session.commit()
+
+part10 = Part(user_id=1, name="AMD Radeon Video Card",
+              description="High performance Radeon GPU", category=category4)
+
+session.add(part10)
 session.commit()
 
 print "added computer parts!"
