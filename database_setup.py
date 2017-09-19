@@ -53,7 +53,7 @@ class Part(Base):
         }
 
 
-engine = create_engine('sqlite:///computerhw.db')
+engine = create_engine('postgresql://catalog:catalog@localhost:5432/items')
 
 
 Base.metadata.create_all(engine)

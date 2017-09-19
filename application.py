@@ -20,7 +20,7 @@ CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Item Catalog Application"
 
-engine = create_engine('sqlite:///computerhw.db')
+engine = create_engine('postgresql://catalog:catalog@localhost:5432/items')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
@@ -350,6 +350,7 @@ def gdisconnect():
 
 if __name__ == '__main__':
     app.secret_key = 'super secret key'
-    app.config['sqlalchemy'] = 'sqlite:///computerhw.db'
+    app.config['sqlalchemy'] = 'postgresql://catalog:catalog@localhost:5432/ \
+                                items'
     app.debug = True
     app.run(host='0.0.0.0', port=8000)
